@@ -19,7 +19,9 @@ const INITIAL_SUPPLIERS = [
     performance_trends: [92, 94, 95, 96, 94, 98],
     esg_rating: "A",
     co2_footprint: "2,400 tons/yr",
-    ethical_sourcing: "94%"
+    ethical_sourcing: "94%",
+    country: "Germany",
+    flag: "🇩🇪"
   },
   {
     id: "SUP-002",
@@ -36,7 +38,9 @@ const INITIAL_SUPPLIERS = [
     performance_trends: [85, 80, 78, 76, 82, 82],
     esg_rating: "B-",
     co2_footprint: "320 tons/yr",
-    ethical_sourcing: "72%"
+    ethical_sourcing: "72%",
+    country: "United States",
+    flag: "🇺🇸"
   },
   {
     id: "SUP-003",
@@ -53,7 +57,9 @@ const INITIAL_SUPPLIERS = [
     performance_trends: [89, 90, 88, 87, 92, 92],
     esg_rating: "A+",
     co2_footprint: "850 tons/yr",
-    ethical_sourcing: "89%"
+    ethical_sourcing: "89%",
+    country: "Switzerland",
+    flag: "🇨🇭"
   },
   {
     id: "SUP-004",
@@ -70,13 +76,15 @@ const INITIAL_SUPPLIERS = [
     performance_trends: [0, 0, 0, 60, 65, 68],
     esg_rating: "AA",
     co2_footprint: "120 tons/yr",
-    ethical_sourcing: "96%"
+    ethical_sourcing: "96%",
+    country: "Denmark",
+    flag: "🇩🇰"
   }
 ];
 
 interface ChatMessage {
   id: string;
-  sender: "User" | "Siemens Procurement Agent" | "Deutsche Bank Credit Agent" | "Siemens ESG Agent" | "Siemens Compliance Agent";
+  sender: string;
   message: string;
   timestamp: string;
   action_type?: string;
@@ -84,19 +92,60 @@ interface ChatMessage {
 
 // Siemens Agent options
 const SIEMENS_AGENTS = [
-  { id: "procurement", name: "Procurement Agent", description: "Vets credit and clears PO limits." },
-  { id: "esg", name: "ESG Vetting Agent", description: "Audits environmental impact and sourcing ethics." },
-  { id: "compliance", name: "Compliance Agent", description: "Vets AML registries and sanction records." }
+  {
+    id: "calculator",
+    name: "Risk Calculator Agent",
+    description: "Simulates debt, equity, and liquidity risks using dynamic mathematical scoring models.",
+    status: "Active"
+  },
+  {
+    id: "credit",
+    name: "Credit Agent",
+    description: "Vets supplier credit ratings and clears PO limits in connection with active registers.",
+    status: "Active"
+  },
+  {
+    id: "esg",
+    name: "ESG Agent",
+    description: "Audits environmental impact, carbon footprint ratings, and ethical governance standards.",
+    status: "Active"
+  },
+  {
+    id: "compliance",
+    name: "Compliance & AML Agent",
+    description: "Performs real-time Anti-Money Laundering checks and global sanctions validation audits.",
+    status: "Active"
+  },
+  {
+    id: "legal",
+    name: "Legal check agent",
+    description: "Validates corporate contracts, jurisdiction constraints, and compliance-related legal provisions.",
+    status: "Inactive"
+  }
 ];
 
 export default function SiemensDashboard() {
   const [suppliers, setSuppliers] = useState(INITIAL_SUPPLIERS);
   const [selectedSupplierId, setSelectedSupplierId] = useState("SUP-001");
-  const [selectedAgentId, setSelectedAgentId] = useState("procurement");
+  const [selectedAgentId, setSelectedAgentId] = useState("calculator");
+  const [supplierSearch, setSupplierSearch] = useState("");
   const [negotiating, setNegotiating] = useState(false);
   const [dbScoreResult, setDbScoreResult] = useState<any>(null);
   const [finalDecision, setFinalDecision] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Vetting History for suppliers
+  const [vettingHistory, setVettingHistory] = useState<Record<string, Array<{ agentName: string; score: string; timestamp: string }>>>({
+    "SUP-001": [
+      { agentName: "Risk Calculator Agent", score: "Low Probability (1.2%)", timestamp: "10:24 AM" },
+      { agentName: "Credit Agent", score: "Cleared (AAA, 96/100)", timestamp: "10:25 AM" },
+      { agentName: "ESG Agent", score: "Compliant (A)", timestamp: "10:26 AM" },
+      { agentName: "Compliance & AML Agent", score: "Passed (98/100)", timestamp: "10:27 AM" }
+    ],
+    "SUP-002": [
+      { agentName: "Credit Agent", score: "Escrow Required (BB-, 58/100)", timestamp: "11:15 AM" }
+    ]
+  });
   
   // Custom PO Value Editing
   const [customPoValue, setCustomPoValue] = useState<string>("");
@@ -108,7 +157,7 @@ export default function SiemensDashboard() {
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const selectedSupplier = suppliers.find(s => s.id === selectedSupplierId) || suppliers[0];
 
   useEffect(() => {
@@ -124,25 +173,15 @@ export default function SiemensDashboard() {
   }, [selectedSupplierId, selectedAgentId]); // Also resets if agent type is switched!
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [chatMessages, negotiating]);
 
   const resetChatForActiveSupplier = () => {
     const activeAgent = SIEMENS_AGENTS.find(a => a.id === selectedAgentId) || SIEMENS_AGENTS[0];
     
-    // Welcome message has NO mention of Deutsche Bank in the beginning
-    setChatMessages([
-      {
-        id: "welcome",
-        sender: activeAgent.id === "procurement" 
-          ? "Siemens Procurement Agent" 
-          : activeAgent.id === "esg" 
-            ? "Siemens ESG Agent" 
-            : "Siemens Compliance Agent",
-        message: `Willkommen! I am the Siemens AG ${activeAgent.name}. Vetting scope loaded for: ${selectedSupplier.name}. Type 'evaluate' or write a custom command below to begin.`,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
+    setChatMessages([]);
     setFinalDecision(null);
     setDbScoreResult(null);
     setErrorMsg(null);
@@ -192,18 +231,54 @@ export default function SiemensDashboard() {
     setActiveConsoleTab("dialogue");
 
     const poValueNum = parseFloat(customPoValue) || selectedSupplier.current_po_value;
+    const activeAgent = SIEMENS_AGENTS.find(a => a.id === selectedAgentId) || SIEMENS_AGENTS[0];
+    const agentSenderName = `Siemens ${activeAgent.name}`;
 
     // Route workflow based on which Agent is selected
-    if (selectedAgentId === "procurement") {
-      // Procurement Agent: queries credit profile from Deutsche Bank Credit Agent
+    if (selectedAgentId === "calculator") {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setChatMessages(prev => [
+          ...prev,
+          {
+            id: `calc-query-${Date.now()}`,
+            sender: agentSenderName,
+            message: `Mathematical risk simulation initiated for ${selectedSupplier.name} (PO Allocation: €${poValueNum.toLocaleString()}). Analyzing liquidity, leverage, and capital indicators...`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ]);
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setChatMessages(prev => [
+          ...prev,
+          {
+            id: `calc-results-${Date.now()}`,
+            sender: agentSenderName,
+            message: `Risk Simulator Results:\n- Expected Default Probability: 0.8% (Extremely Low)\n- Current Liquidity Ratio: ${(selectedSupplier as any).liquidity_ratio || 2.1} (Satisfactory)\n- Debt-to-Equity Ratio: ${(selectedSupplier as any).debt_to_equity || 0.8} (Stable)\n- Risk Rating: Approved for PO threshold.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ]);
+        setFinalDecision("RISK_APPROVED");
+        setVettingHistory(prev => ({
+          ...prev,
+          [selectedSupplierId]: [
+            ...(prev[selectedSupplierId] || []),
+            { agentName: activeAgent.name, score: "Low Probability (0.8%)", timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+          ]
+        }));
+      } finally {
+        setNegotiating(false);
+      }
+    } else if (selectedAgentId === "credit") {
+      // Credit Agent: queries credit profile from registers
       try {
         await new Promise(resolve => setTimeout(resolve, 800));
         setChatMessages(prev => [
           ...prev,
           {
             id: `siemens-query-${Date.now()}`,
-            sender: "Siemens Procurement Agent",
-            message: `Evaluation initiated for ${selectedSupplier.name} (PO Allocation: €${poValueNum.toLocaleString()}). Querying Deutsche Bank Credit Agent to inspect creditworthiness registers...`,
+            sender: agentSenderName,
+            message: `Evaluation initiated for ${selectedSupplier.name} (PO Allocation: €${poValueNum.toLocaleString()}). Vetting credit registers and querying trade ratings...`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
@@ -226,11 +301,12 @@ export default function SiemensDashboard() {
         
         for (const log of fullLogs) {
           await new Promise(resolve => setTimeout(resolve, 900));
+          // Single-agent constraint: Override log.sender to represent only the selected Credit Agent!
           setChatMessages(prev => [
             ...prev,
             {
               id: `bubble-${Date.now()}-${Math.random()}`,
-              sender: log.sender,
+              sender: agentSenderName,
               message: log.message,
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               action_type: log.action_type
@@ -239,6 +315,13 @@ export default function SiemensDashboard() {
         }
 
         setFinalDecision(data.siemens_decision);
+        setVettingHistory(prev => ({
+          ...prev,
+          [selectedSupplierId]: [
+            ...(prev[selectedSupplierId] || []),
+            { agentName: activeAgent.name, score: `Cleared (${data.db_credit_score}, ${data.db_numerical_rating}/100)`, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+          ]
+        }));
         setDbScoreResult({
           score: data.db_credit_score,
           rating: data.db_numerical_rating,
@@ -249,14 +332,13 @@ export default function SiemensDashboard() {
       } catch (err: any) {
         setErrorMsg("Failed to connect to LangGraph Backend. Simulating offline clearance run...");
         
-        // Mock credit clearing dialogue (first queries DB agent)
         await new Promise(resolve => setTimeout(resolve, 1000));
         setChatMessages(prev => [
           ...prev,
           {
             id: `db-reply-mock-${Date.now()}`,
-            sender: "Deutsche Bank Credit Agent",
-            message: `Sehr geehrte Damen und Herren,\n\nWe have retrieved credit metrics for ${selectedSupplier.name}. Rating: "${selectedSupplier.credit_score || 'AAA'}" | Risk: "${selectedSupplier.risk_level || 'Extremely Low'}".\n\nFinancial Score: ${selectedSupplier.numerical_rating || 95}/100.\nRecommended program: ${poValueNum > 1000000 ? 'Standard Bank Guarantee & Escrow' : 'Supplier Early Payment Program'}.`,
+            sender: agentSenderName,
+            message: `I have retrieved credit metrics from the database registries for ${selectedSupplier.name}. Rating: "${selectedSupplier.credit_score || 'AAA'}" | Risk: "${selectedSupplier.risk_level || 'Extremely Low'}".\n\nFinancial Score: ${selectedSupplier.numerical_rating || 95}/100.\nRecommended program: ${poValueNum > 1000000 ? 'Standard Bank Guarantee & Escrow' : 'Supplier Early Payment Program'}.`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
@@ -268,13 +350,13 @@ export default function SiemensDashboard() {
 
         if ((selectedSupplier.credit_score && ["BB-", "B+"].includes(selectedSupplier.credit_score)) || selectedSupplier.id === "SUP-002") {
           mockDecision = "PENDING_FINANCE";
-          decisionText = `The credit rating (${selectedSupplier.credit_score}) indicates moderate risk. We require a collateralized Escrow structure and 100% Bank Guarantee to release funding. Let's register a bank guarantee.`;
+          decisionText = `The credit rating (${selectedSupplier.credit_score}) indicates moderate risk. We require a collateralized Escrow structure and 100% Bank Guarantee to release funding. Setting up bank guarantee registers now...`;
           
           setChatMessages(prev => [
             ...prev,
             {
               id: `siemens-guar-mock-${Date.now()}`,
-              sender: "Siemens Procurement Agent",
+              sender: agentSenderName,
               message: decisionText,
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }
@@ -285,8 +367,8 @@ export default function SiemensDashboard() {
             ...prev,
             {
               id: `db-confirm-mock-${Date.now()}`,
-              sender: "Deutsche Bank Credit Agent",
-              message: "Deutsche Bank confirms setup of a Collateralized Escrow account. Credit limits verified. Bank Guarantee issued.",
+              sender: agentSenderName,
+              message: "Setup of a Collateralized Escrow account is confirmed. Credit limits verified. Bank Guarantee issued.",
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }
           ]);
@@ -301,13 +383,20 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `siemens-final-mock-${Date.now()}`,
-            sender: "Siemens Procurement Agent",
+            sender: agentSenderName,
             message: decisionText,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
 
         setFinalDecision(mockDecision);
+        setVettingHistory(prev => ({
+          ...prev,
+          [selectedSupplierId]: [
+            ...(prev[selectedSupplierId] || []),
+            { agentName: activeAgent.name, score: mockDecision === "APPROVED" ? `Cleared (${selectedSupplier.credit_score || 'AAA'}, ${selectedSupplier.numerical_rating || 95}/100)` : `Escrow Required (${selectedSupplier.credit_score || 'BB-'}, ${selectedSupplier.numerical_rating || 58}/100)`, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+          ]
+        }));
         setDbScoreResult({
           score: selectedSupplier.credit_score || "AAA",
           rating: selectedSupplier.numerical_rating || 95,
@@ -325,7 +414,7 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `esg-1-${Date.now()}`,
-            sender: "Siemens ESG Agent",
+            sender: agentSenderName,
             message: `Initiating ESG compliance audit for ${selectedSupplier.name}...\nFetching carbon footprint and supply chain ethical sourcing integrity indexes.`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
@@ -336,7 +425,7 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `esg-2-${Date.now()}`,
-            sender: "Siemens ESG Agent",
+            sender: agentSenderName,
             message: `ESG Database Audit Results:\n- Carbon Footprint Rating: ${selectedSupplier.co2_footprint || "1,200 tons/yr"}\n- Ethical Raw Sourcing Vetting: ${selectedSupplier.ethical_sourcing || "90%"}\n- Supply Chain Integrity Vetting Index: PASSED`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
@@ -347,16 +436,23 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `esg-3-${Date.now()}`,
-            sender: "Siemens ESG Agent",
+            sender: agentSenderName,
             message: `ESG Audit Score for ${selectedSupplier.name} is "${selectedSupplier.esg_rating || "A"}" (Compliant). Siemens Formally clears the circular supplier standards.`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
         setFinalDecision("ESG_COMPLIANT");
+        setVettingHistory(prev => ({
+          ...prev,
+          [selectedSupplierId]: [
+            ...(prev[selectedSupplierId] || []),
+            { agentName: activeAgent.name, score: `Compliant (${selectedSupplier.esg_rating || "A"})`, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+          ]
+        }));
       } finally {
         setNegotiating(false);
       }
-    } else {
+    } else if (selectedAgentId === "compliance") {
       // Compliance & Legal Agent: Vets Anti-Money Laundering registries & OFAC databases
       try {
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -364,7 +460,7 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `comp-1-${Date.now()}`,
-            sender: "Siemens Compliance Agent",
+            sender: agentSenderName,
             message: `Vetting corporate registry logs and legal entities for ${selectedSupplier.name}...\nScanning global sanctions indexes and Anti-Money Laundering registers.`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
@@ -375,7 +471,7 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `comp-2-${Date.now()}`,
-            sender: "Siemens Compliance Agent",
+            sender: agentSenderName,
             message: `Compliance Scanning Completed:\n- OFAC Sanctions Database Vetting: NO MATCHES / CLEARED\n- Politically Exposed Persons (PEP) Check: NO MATCHES / CLEARED\n- AML Registry Score Index: 98/100 (Extremely Low Risk)`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
@@ -386,12 +482,34 @@ export default function SiemensDashboard() {
           ...prev,
           {
             id: `comp-3-${Date.now()}`,
-            sender: "Siemens Compliance Agent",
+            sender: agentSenderName,
             message: `Legal vetting completed successfully. Supplier ${selectedSupplier.name} is certified as COMPLIANT and cleared for trade transactions.`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
         setFinalDecision("COMPLIANCE_CLEARED");
+        setVettingHistory(prev => ({
+          ...prev,
+          [selectedSupplierId]: [
+            ...(prev[selectedSupplierId] || []),
+            { agentName: activeAgent.name, score: "Passed (98/100)", timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+          ]
+        }));
+      } finally {
+        setNegotiating(false);
+      }
+    } else if (selectedAgentId === "legal") {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setChatMessages(prev => [
+          ...prev,
+          {
+            id: `legal-inactive-${Date.now()}`,
+            sender: agentSenderName,
+            message: `Legal Check Agent is currently INACTIVE. Session auditing and real-time legal vetting are suspended.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ]);
       } finally {
         setNegotiating(false);
       }
@@ -402,11 +520,13 @@ export default function SiemensDashboard() {
     setChatInput("evaluate");
   };
 
+  const activeAgent = SIEMENS_AGENTS.find(a => a.id === selectedAgentId) || SIEMENS_AGENTS[0];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
       {/* Siemens Header */}
       <header className="bg-slate-900 text-white border-b-4 border-[#009999] px-6 py-4 shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-[80%] w-[80%] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             <div className="font-extrabold text-2xl tracking-[0.2em] text-[#009999] flex items-center">
               SIEMENS
@@ -416,71 +536,72 @@ export default function SiemensDashboard() {
             </div>
             <div className="h-6 w-px bg-slate-700 hidden md:block"></div>
             <span className="text-sm font-semibold tracking-wider uppercase text-slate-300 hidden md:inline">
-              Supplier Risk Intelligence & Agent Terminal
+              Supplier Intelligence & Agent Terminal
             </span>
           </div>
 
           <div className="flex items-center gap-4">
             <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full flex items-center gap-2 border border-slate-700">
               <span className="w-2.5 h-2.5 rounded-full bg-[#009999] animate-pulse"></span>
-              Gemini AI Agents Connected
+              prometheus agents connected
             </span>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="flex-1 max-w-[80%] w-[80%] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Column: Supplier Register & Dossier (Lg: 5cols) */}
-        <section className="lg:col-span-5 flex flex-col gap-6">
+        <section className="lg:col-span-5 flex flex-col gap-3">
           {/* Supplier List */}
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
-              <h2 className="font-semibold text-xs tracking-wider uppercase flex items-center gap-2">
-                Siemens Active Suppliers
-              </h2>
-              <span className="text-xs bg-[#009999] px-2 py-0.5 rounded text-white font-medium">
-                {suppliers.length} Records
-              </span>
+            {/* Supplier Search Bar (Moved Above Header) */}
+            <div className="p-3 border-b border-slate-200 bg-slate-50/50 relative">
+              <input
+                type="text"
+                placeholder="Search active suppliers..."
+                value={supplierSearch}
+                onChange={(e) => setSupplierSearch(e.target.value)}
+                className="w-full text-xs bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 focus:outline-none focus:border-[#009999] text-slate-800 font-medium"
+              />
+              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-5 top-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
 
-            <div className="divide-y divide-slate-100 max-h-[320px] overflow-y-auto">
-              {suppliers.map((supplier) => (
-                <button
-                  key={supplier.id}
-                  onClick={() => setSelectedSupplierId(supplier.id)}
-                  className={`w-full text-left p-4 hover:bg-slate-50 transition flex flex-col gap-1.5 focus:outline-none ${
-                    selectedSupplierId === supplier.id ? "bg-[#009999]/5 border-l-4 border-[#009999]" : "border-l-4 border-transparent"
-                  }`}
-                >
-                  <div className="flex justify-between items-start w-full">
-                    <span className="font-bold text-slate-800 text-sm leading-tight">
-                      {supplier.name}
-                    </span>
-                    <span className="text-xs font-semibold px-2 py-0.5 bg-slate-100 rounded text-slate-500">
-                      {supplier.id}
-                    </span>
-                  </div>
-                  <span className="text-xs text-slate-500 font-medium">{supplier.category}</span>
-                  
-                  <div className="flex justify-between items-center mt-1 w-full text-xs">
-                    <span className="text-slate-500">
-                      Allocated PO: <strong className="text-slate-700">€{supplier.current_po_value.toLocaleString()}</strong>
-                    </span>
-                    
-                    <span className={`px-1.5 py-0.2 rounded font-extrabold text-[10px] ${
-                      supplier.credit_score?.startsWith('A') 
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                        : supplier.credit_score === 'N/A' 
-                          ? 'bg-slate-100 text-slate-600'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
-                    }`}>
-                      Score: {supplier.credit_score || 'N/A'}
-                    </span>
-                  </div>
-                </button>
-              ))}
+            <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
+              <h2 className="font-semibold text-xs tracking-wider uppercase flex items-center gap-2">
+                Suppliers list
+              </h2>
+            </div>
+
+            <div className="divide-y divide-slate-100 max-h-[145px] overflow-y-scroll">
+              {suppliers
+                .filter(supplier =>
+                  supplier.name.toLowerCase().includes(supplierSearch.toLowerCase()) ||
+                  supplier.id.toLowerCase().includes(supplierSearch.toLowerCase())
+                )
+                .map((supplier) => (
+                  <button
+                    key={supplier.id}
+                    onClick={() => setSelectedSupplierId(supplier.id)}
+                    className={`w-full text-left p-4 hover:bg-slate-50 transition flex flex-col gap-1 focus:outline-none ${
+                      selectedSupplierId === supplier.id ? "bg-[#009999]/5 border-l-4 border-[#009999]" : "border-l-4 border-transparent"
+                    }`}
+                  >
+                    <div className="flex justify-between items-start w-full">
+                      <span className="font-bold text-slate-800 text-sm leading-tight">
+                        {supplier.name}
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-500 font-medium">{supplier.category}</span>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-sm">{(supplier as any).flag}</span>
+                      <span className="text-xs text-slate-500 font-medium">{(supplier as any).country}</span>
+                    </div>
+                  </button>
+                ))}
             </div>
           </div>
 
@@ -506,6 +627,14 @@ export default function SiemensDashboard() {
                 <p className="text-xs text-slate-500 leading-relaxed mt-0.5">{selectedSupplier.description}</p>
               </div>
 
+              <div>
+                <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Origin Country</label>
+                <div className="text-xs font-semibold text-slate-700 flex items-center gap-1.5 mt-0.5">
+                  <span className="text-sm">{(selectedSupplier as any).flag}</span>
+                  <span className="text-xs">{(selectedSupplier as any).country}</span>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3 text-xs">
                 <div>
                   <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Operational Status</label>
@@ -517,61 +646,63 @@ export default function SiemensDashboard() {
                 </div>
               </div>
 
-              {/* Editable Purchase Order Value */}
-              <div className="border-t border-slate-100 pt-3 flex flex-col gap-1.5">
-                <label className="text-[10px] text-[#009999] font-bold uppercase tracking-wider block">
-                  Purchase Order Budget (€)
+              {/* Vetting History logs */}
+              <div className="border-t border-slate-100 pt-3">
+                <label className="text-[10px] text-[#009999] font-bold uppercase tracking-wider block mb-1.5">
+                  Multi-Agent Vetting History
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-xs text-slate-400 font-medium">€</span>
-                  <input
-                    type="number"
-                    value={customPoValue}
-                    onChange={(e) => setCustomPoValue(e.target.value)}
-                    placeholder="Enter Custom PO amount"
-                    className="w-full text-xs bg-slate-50 border border-slate-200 rounded px-7 py-2 focus:outline-none focus:border-[#009999] focus:bg-white text-slate-800 font-bold"
-                  />
+                <div className="space-y-1.5 text-xs font-mono">
+                  {vettingHistory[selectedSupplier.id] && vettingHistory[selectedSupplier.id].length > 0 ? (
+                    vettingHistory[selectedSupplier.id].map((v, idx) => (
+                      <div key={idx} className="flex justify-between items-center bg-slate-50 p-2 border border-slate-100 rounded">
+                        <span className="font-bold text-[#009999]">{v.agentName}:</span>
+                        <span className="font-bold text-slate-700 text-[11px]">{v.score}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-slate-400 italic text-[10px] py-1">No vetting records found. Run analysis from chatbot terminal.</div>
+                  )}
                 </div>
               </div>
 
-              <div className="bg-slate-50 rounded border p-3.5 text-xs text-slate-500 mt-2">
-                <p className="leading-relaxed">
-                  Vetting clearance is initiated from the agent chatbot terminal.
+              <div className="bg-slate-50 rounded border p-3.5 text-xs text-slate-500 mt-2 flex flex-col items-start gap-1.5">
+                <p className="leading-relaxed font-bold uppercase text-[10px] text-slate-400">
+                  re-initialte clearance
                 </p>
                 <button
                   onClick={triggerClearanceSuggestion}
-                  className="text-xs text-[#009999] font-bold underline mt-1 block hover:text-[#007f7f]"
+                  className="bg-[#009999] hover:bg-[#007f7f] text-white font-bold text-xs uppercase tracking-wider px-4 py-1.5 rounded transition focus:outline-none cursor-pointer"
                 >
-                  Prepare audit command for {selectedSupplier.name}
+                  Yes
                 </button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Right Column: Chatbot Console / Operational Analytics Tabs (Lg: 7cols) */}
-        <section className="lg:col-span-7 flex flex-col gap-6">
+        {/* Right Column: Chatbot Console (Lg: 7cols) */}
+        <section className="lg:col-span-7 flex flex-col gap-2">
           
           {/* OPTION TO SELECT ONE VETTING AGENT AT A TIME */}
-          <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm flex flex-col gap-2">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-              Active Vetting Agent (Select One)
-            </span>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white rounded-lg border border-slate-200 p-2.5 shadow-sm flex flex-col gap-1.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
               {SIEMENS_AGENTS.map((agent) => (
                 <button
                   key={agent.id}
                   onClick={() => setSelectedAgentId(agent.id)}
-                  className={`py-2 px-3 text-left rounded border transition focus:outline-none flex flex-col gap-0.5 ${
+                  className={`py-2 px-2.5 text-left rounded border transition focus:outline-none flex flex-col gap-0.5 min-w-0 ${
                     selectedAgentId === agent.id 
                       ? "bg-[#009999] border-[#009999] text-white shadow-sm font-semibold" 
                       : "bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-800"
                   }`}
                 >
-                  <span className="text-[11px] block">{agent.name}</span>
-                  <span className={`text-[8px] leading-tight ${selectedAgentId === agent.id ? "text-teal-100" : "text-slate-400"}`}>
-                    {agent.id === "procurement" ? "Queries DB registry" : "Local Audit"}
-                  </span>
+                  <span className="text-[10px] block truncate font-bold leading-tight">{agent.name}</span>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className={`w-1.5 h-1.5 rounded-full ${agent.status === "Active" ? "bg-emerald-400 animate-pulse" : "bg-red-550"}`}></span>
+                    <span className={`text-[8px] font-bold uppercase tracking-wider ${selectedAgentId === agent.id ? "text-teal-100" : (agent.status === "Active" ? "text-emerald-500" : "text-red-500")}`}>
+                      {agent.status === "Active" ? "Live" : "Offline"}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
@@ -579,146 +710,90 @@ export default function SiemensDashboard() {
 
           <div className="bg-slate-900 rounded-lg shadow-xl border border-slate-855 overflow-hidden flex flex-col flex-1 min-h-[460px]">
             
-            {/* Tab Navigation Menu */}
-            <div className="bg-slate-950 px-4 py-1 flex items-center justify-between border-b border-slate-800">
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setActiveConsoleTab("dialogue")}
-                  className={`py-3 font-mono text-xs font-semibold uppercase tracking-wider border-b-2 transition focus:outline-none ${
-                    activeConsoleTab === "dialogue" 
-                      ? "text-[#009999] border-[#009999]" 
-                      : "text-slate-500 border-transparent hover:text-slate-300"
-                  }`}
-                >
-                  Agent Chatbot Terminal
-                </button>
-                <button
-                  onClick={() => setActiveConsoleTab("analytics")}
-                  className={`py-3 font-mono text-xs font-semibold uppercase tracking-wider border-b-2 transition focus:outline-none ${
-                    activeConsoleTab === "analytics" 
-                      ? "text-[#009999] border-[#009999]" 
-                      : "text-slate-500 border-transparent hover:text-slate-300"
-                  }`}
-                >
-                  Operational Risk Analytics
-                </button>
-              </div>
-
+            {/* Tab Navigation Menu (Analytics removed) */}
+            <div className="bg-slate-950 px-4 py-3 flex items-center justify-between border-b border-slate-800">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#009999]">
+                Agent Terminal
+              </span>
               <span className="text-[10px] font-mono text-slate-500">
                 {negotiating ? "Running analysis..." : "Standby"}
               </span>
             </div>
 
-            {/* TAB 1: Chatbot Dialogue (Siemens Petrol style background) */}
-            {activeConsoleTab === "dialogue" && (
-              <div className="flex-1 bg-[#0c1f1f] flex flex-col justify-between border border-[#009999]/10">
-                {/* Chat Message Box */}
-                <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 max-h-[350px] min-h-[280px]">
-                  {chatMessages.map((msg) => {
-                    const isUser = msg.sender === "User";
-                    const isSiemens = msg.sender.includes("Siemens");
-                    
-                    return (
+            {/* Chatbot Dialogue (Siemens Petrol style background) */}
+            <div className="flex-1 bg-[#0c1f1f] flex flex-col justify-between border border-[#009999]/10">
+              
+              {/* Active Session Info - Bold and Larger supplier name and agent type */}
+              <div className="bg-slate-950/45 border-b border-[#009999]/10 p-3.5 flex flex-col gap-0.5">
+                <div className="text-[10px] text-slate-450 font-bold uppercase tracking-wider font-mono">Vetting Session</div>
+                <div className="text-white text-base md:text-lg font-black leading-tight">
+                  Supplier: <span className="underline decoration-[#009999] decoration-2 underline-offset-4">{selectedSupplier.name}</span>
+                </div>
+                <div className="text-[#009999] text-xs font-black uppercase tracking-wider mt-1 font-mono">
+                  Requested Agent: {activeAgent.name}
+                </div>
+              </div>
+              {/* Chat Message Box */}
+              <div ref={chatContainerRef} className="flex-1 p-4 md:p-6 overflow-y-scroll space-y-4 max-h-[350px] min-h-[280px]">
+                {chatMessages.map((msg) => {
+                  const isUser = msg.sender === "User";
+                  const isSiemens = msg.sender.includes("Siemens");
+                  
+                  return (
+                    <div 
+                      key={msg.id}
+                      className={`flex flex-col max-w-[85%] ${
+                        isUser ? "ml-auto items-end" : "mr-auto items-start"
+                      }`}
+                    >
+                      <span className="text-[9px] text-slate-450 font-bold uppercase tracking-wider mb-1 font-mono">
+                        {msg.sender} &bull; {msg.timestamp}
+                      </span>
+
                       <div 
-                        key={msg.id}
-                        className={`flex flex-col max-w-[85%] ${
-                          isUser ? "ml-auto items-end" : "mr-auto items-start"
+                        className={`p-3 rounded-lg text-xs leading-relaxed shadow-sm ${
+                          isUser 
+                            ? "bg-slate-800 text-white rounded-tr-none border border-slate-700" 
+                            : isSiemens
+                              ? "bg-[#009999] text-white rounded-tl-none border border-[#007979]/40"
+                              : "bg-[#002f6c] text-white rounded-tl-none border border-blue-905/45"
                         }`}
                       >
-                        <span className="text-[9px] text-slate-450 font-bold uppercase tracking-wider mb-1 font-mono">
-                          {msg.sender} &bull; {msg.timestamp}
-                        </span>
-
-                        <div 
-                          className={`p-3 rounded-lg text-xs leading-relaxed shadow-sm ${
-                            isUser 
-                              ? "bg-slate-800 text-white rounded-tr-none border border-slate-700" 
-                              : isSiemens
-                                ? "bg-[#009999] text-white rounded-tl-none border border-[#007979]/40"
-                                : "bg-[#002f6c] text-white rounded-tl-none border border-blue-905/45"
-                          }`}
-                        >
-                          <p className="whitespace-pre-line">{msg.message}</p>
-                        </div>
+                        <p className="whitespace-pre-line">{msg.message}</p>
                       </div>
-                    );
-                  })}
-                  {negotiating && (
-                    <div className="flex items-center gap-2 text-[10px] text-teal-400/80 font-mono italic animate-pulse">
-                      <span className="w-1.5 h-1.5 bg-[#009999] rounded-full animate-bounce"></span>
-                      <span>Clearing nodes...</span>
                     </div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
+                  );
+                })}
+                {negotiating && (
+                  <div className="flex items-center gap-2 text-[10px] text-teal-400/80 font-mono italic animate-pulse">
+                    <span className="w-1.5 h-1.5 bg-[#009999] rounded-full animate-bounce"></span>
+                    <span>Clearing nodes...</span>
+                  </div>
+                )}
+              </div>
 
-                {/* Chat input box */}
-                <form 
-                  onSubmit={handleSendMessage}
-                  className="bg-slate-900 border-t border-[#009999]/20 p-3 flex gap-2"
+              {/* Chat input box */}
+              <form 
+                onSubmit={handleSendMessage}
+                className="bg-slate-900 border-t border-[#009999]/20 p-3 flex gap-2"
+              >
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="ask me..."
+                  className="flex-1 bg-slate-950 text-xs text-white border border-[#009999]/30 rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#009999]"
+                  disabled={negotiating}
+                />
+                <button
+                  type="submit"
+                  disabled={negotiating || !chatInput.trim()}
+                  className="bg-[#009999] hover:bg-[#007f7f] disabled:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-lg transition focus:outline-none"
                 >
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder={`Type 'evaluate' to run active agent analysis...`}
-                    className="flex-1 bg-slate-950 text-xs text-white border border-[#009999]/30 rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#009999]"
-                    disabled={negotiating}
-                  />
-                  <button
-                    type="submit"
-                    disabled={negotiating || !chatInput.trim()}
-                    className="bg-[#009999] hover:bg-[#007f7f] disabled:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-lg transition focus:outline-none"
-                  >
-                    Send
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* TAB 2: Operational Analytics */}
-            {activeConsoleTab === "analytics" && (
-              <div className="flex-1 p-6 space-y-6 text-slate-300">
-                <div className="border-b border-slate-800 pb-3">
-                  <h4 className="text-sm font-bold text-slate-200">Historical Reliability & Ratings Chart</h4>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Supplier credit history trends over the past 6 quarters.</p>
-                </div>
-
-                {/* SVG Visual Graph representing credit scoring trends */}
-                <div className="h-44 bg-slate-950/40 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
-                  <div className="flex-1 flex items-end gap-3 justify-between px-4">
-                    {selectedSupplier.performance_trends.map((val, idx) => (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                        {/* Interactive Bar */}
-                        <div 
-                          className="w-full bg-[#009999]/30 border border-[#009999] hover:bg-[#009999]/50 rounded-t transition-all duration-500"
-                          style={{ height: val > 0 ? `${(val / 100) * 110}px` : "1px" }}
-                        ></div>
-                        <span className="text-[9px] text-slate-500 font-mono">Q{idx + 1} ({val > 0 ? `${val}%` : 'N/A'})</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-                  <div className="bg-slate-950/30 border border-slate-800 p-4 rounded-lg flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500">Numerical Rating</span>
-                    <strong className="text-xl text-[#009999] mt-1">
-                      {selectedSupplier.numerical_rating ? `${selectedSupplier.numerical_rating} / 100` : "Audit Pending"}
-                    </strong>
-                    <span className="text-[9px] text-slate-600 mt-2">Determined by Deutsche Bank Audit registry</span>
-                  </div>
-
-                  <div className="bg-slate-950/30 border border-slate-800 p-4 rounded-lg flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500">Clearance Status</span>
-                    <strong className="text-xl text-slate-200 mt-1">
-                      {finalDecision || "Awaiting Verification"}
-                    </strong>
-                    <span className="text-[9px] text-slate-600 mt-2">Siemens procurement authorization</span>
-                  </div>
-                </div>
-              </div>
-            )}
+                  Send
+                </button>
+              </form>
+            </div>
 
             {/* Offline banner warning */}
             {errorMsg && (
@@ -754,7 +829,7 @@ export default function SiemensDashboard() {
 
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs px-6 py-4 mt-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+        <div className="max-w-[80%] w-[80%] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           <span>&copy; 2026 Siemens AG. General Procurement Division.</span>
           <span className="text-slate-500 uppercase tracking-widest text-[9px]">Restricted - Corporate Sourcing Only</span>
         </div>

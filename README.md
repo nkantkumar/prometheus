@@ -1,6 +1,6 @@
 # Siemens AG & Deutsche Bank Multi-Agent Procurement Platform
 
-An agentic trade finance and supplier clearance simulator coordinating multi-agent negotiations using **FastAPI**, **LangGraph**, and **Google Gemini** on the backend, integrated with two custom Next.js dashboards styled after the public portals of **Siemens AG** and **Deutsche Bank**.
+An agentic trade finance and supplier clearance simulator coordinating multi-agent negotiations.
 
 ---
 
