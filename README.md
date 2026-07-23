@@ -12,7 +12,7 @@ The project consists of three main components:
    - **Siemens AG Procurement Agent**: Evaluates suppliers, reviews credit ratings, requests collateral guarantees, and makes approval decisions.
    - **Deutsche Bank Credit Agent**: Performs supplier checks against a mock credit registry, scores risk levels, and approves letters of credit.
 2. **`frontend/siemens/`**: Next.js App Router portal representing the Siemens AG Procurement dashboard.
-3. **`frontend/deutsche-bank/`**: Next.js App Router portal representing the Deutsche Bank Risk & Trade Finance dashboard.
+3. **`frontend/the-bank/`**: Next.js App Router portal representing the Deutsche Bank Risk & Trade Finance dashboard.
 
 ---
 
@@ -57,11 +57,11 @@ Prerequisites: Ensure you have **Python 3.10+** and **Node.js 18+** installed.
    ```
    Open your browser to `http://localhost:3000` to access the Siemens Procurement Portal.
 
-### Step 3: Start the Deutsche Bank Dashboard
+### Step 3: Start the The Bank Dashboard
 
-1. Navigate to the Deutsche Bank frontend directory:
+1. Navigate to the The Bank frontend directory:
    ```bash
-   cd frontend/deutsche-bank
+   cd frontend/the-bank
    ```
 2. Install npm dependencies:
    ```bash
@@ -71,7 +71,7 @@ Prerequisites: Ensure you have **Python 3.10+** and **Node.js 18+** installed.
    ```bash
    npm run dev
    ```
-   The Deutsche Bank Trade Finance Portal starts on `http://localhost:3001` (configured in `package.json` to prevent port conflict). Open your browser to `http://localhost:3001` to view it.
+   The The Bank Trade Finance Portal starts on `http://localhost:3001` (configured in `package.json` to prevent port conflict). Open your browser to `http://localhost:3001` to view it.
 
 ---
 

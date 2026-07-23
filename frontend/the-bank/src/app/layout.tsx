@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prometheus Bank Agent",
-  description: "Prometheus Bank Corporate Agent Portal",
+  title: "The Bank Agent",
+  description: "The Bank Corporate Agent Portal",
 };
 
 export default function RootLayout({
