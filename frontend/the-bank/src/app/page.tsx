@@ -236,6 +236,14 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
 // Available bank agents list
 const ALL_BANK_AGENTS = [
   {
+    id: "esg",
+    name: "ESG",
+    description: "Audits environmental impact, carbon footprint ratings, and ethical governance standards.",
+    popular: false,
+    status: "Active",
+    category: "corporate"
+  },
+  {
     id: "calculator",
     name: "Risk Calculator",
     description: "Simulates debt, equity, and liquidity risks using dynamic mathematical scoring models.",
@@ -248,14 +256,6 @@ const ALL_BANK_AGENTS = [
     name: "Credit",
     description: "Vets supplier credit ratings and stores cleared audit transcripts in connection with your client portals.",
     popular: true,
-    status: "Active",
-    category: "corporate"
-  },
-  {
-    id: "esg",
-    name: "ESG",
-    description: "Audits environmental impact, carbon footprint ratings, and ethical governance standards.",
-    popular: false,
     status: "Active",
     category: "corporate"
   },
@@ -402,7 +402,7 @@ function getAgentIllustration(id: string) {
 }
 
 export default function TheBankDashboard() {
-  const [selectedAgentId, setSelectedAgentId] = useState("calculator");
+  const [selectedAgentId, setSelectedAgentId] = useState("esg");
   const [agentCategory, setAgentCategory] = useState<"corporate" | "retail">("corporate");
   const [agentSearch, setAgentSearch] = useState("");
 
@@ -604,7 +604,7 @@ export default function TheBankDashboard() {
               <button
                 onClick={() => {
                   setAgentCategory("corporate");
-                  setSelectedAgentId("calculator");
+                  setSelectedAgentId("esg");
                 }}
                 className={`pb-2 px-1 text-sm font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
                   agentCategory === "corporate"
