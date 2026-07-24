@@ -938,12 +938,9 @@ export default function TheBankDashboard() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#002f6c]/90 backdrop-blur-sm text-slate-300 text-sm md:text-base px-6 py-4 mt-8 border-t border-blue-900">
+      <footer className="bg-[#002f6c]/90 backdrop-blur-sm text-slate-300 text-sm md:text-base px-6 py-4 mt-0 border-t border-blue-900">
         <div className="max-w-[80%] w-[80%] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           <span>&copy; 2026 The Bank AG. Member FDIC.</span>
-          <span className="text-slate-400 font-semibold uppercase tracking-widest text-[11px] md:text-xs">
-            RESTRICTED AUDITING ENVIRONMENT
-          </span>
         </div>
       </footer>
 
