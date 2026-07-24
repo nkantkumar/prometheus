@@ -19,7 +19,7 @@ const PHILIPS_PORTFOLIO = [
     esg_rating: "AA",
     co2_footprint: "120 tons/yr",
     ethical_sourcing: "92%",
-    agents_used: ["Credit Agent", "ESG Agent"],
+    agents_used: ["Credit Score", "ESG Agent"],
     po_value: 980000.0,
     clearance_status: "APPROVED",
     operational_rating: "Excellent (92%)",
@@ -40,7 +40,7 @@ const PHILIPS_PORTFOLIO = [
     esg_rating: "A",
     co2_footprint: "450 tons/yr",
     ethical_sourcing: "88%",
-    agents_used: ["Credit Agent", "ESG Agent", "Compliance & AML Agent"],
+    agents_used: ["Credit Score", "ESG Agent", "Compliance & AML Agent"],
     po_value: 450000.0,
     clearance_status: "APPROVED",
     operational_rating: "Very Good (86%)",
@@ -61,7 +61,7 @@ const PHILIPS_PORTFOLIO = [
     esg_rating: "AAA",
     co2_footprint: "95 tons/yr",
     ethical_sourcing: "97%",
-    agents_used: ["Credit Agent"],
+    agents_used: ["Credit Score"],
     po_value: 1500000.0,
     clearance_status: "APPROVED",
     operational_rating: "Excellent (98%)",
@@ -86,7 +86,7 @@ const SIEMENS_PORTFOLIO = [
     esg_rating: "A",
     co2_footprint: "2,400 tons/yr",
     ethical_sourcing: "94%",
-    agents_used: ["Credit Agent", "Compliance & AML Agent"],
+    agents_used: ["Credit Score", "Compliance & AML Agent"],
     po_value: 1200000.0,
     clearance_status: "APPROVED",
     operational_rating: "Excellent (94%)",
@@ -107,7 +107,7 @@ const SIEMENS_PORTFOLIO = [
     esg_rating: "B-",
     co2_footprint: "320 tons/yr",
     ethical_sourcing: "72%",
-    agents_used: ["Credit Agent", "Compliance & AML Agent", "ESG Agent"],
+    agents_used: ["Credit Score", "Compliance & AML Agent", "ESG Agent"],
     po_value: 450000.0,
     clearance_status: "PENDING_FINANCE",
     operational_rating: "Fair (76%)",
@@ -128,7 +128,7 @@ const SIEMENS_PORTFOLIO = [
     esg_rating: "A+",
     co2_footprint: "850 tons/yr",
     ethical_sourcing: "89%",
-    agents_used: ["Credit Agent", "ESG Agent"],
+    agents_used: ["Credit Score", "ESG Agent"],
     po_value: 850000.0,
     clearance_status: "APPROVED",
     operational_rating: "Very Good (88%)",
@@ -149,7 +149,7 @@ const SIEMENS_PORTFOLIO = [
     esg_rating: "AA",
     co2_footprint: "120 tons/yr",
     ethical_sourcing: "96%",
-    agents_used: ["Credit Agent", "ESG Agent"],
+    agents_used: ["Credit Score", "ESG Agent"],
     po_value: 2300000.0,
     clearance_status: "APPROVED",
     operational_rating: "Pending Review",
@@ -167,7 +167,7 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
       message: "Dear The Bank Agent,\nWe request a supplier credit rating assessment for NXP Semiconductors N.V. for a target Purchase Order of €980,000."
     },
     {
-      sender: "The Bank Credit Agent",
+      sender: "The Bank Credit Score",
       action_type: "PROVIDE_SCORE",
       timestamp: "10:14:24 AM",
       message: "Sehr geehrte Damen und Herren,\n\nWe have retrieved credit metrics for NXP Semiconductors N.V. Credit rating: AA- (Low Default Risk). Payment behavior: Pays within 15 days.\nRecommended trade program: Supplier Early Payment Program."
@@ -187,7 +187,7 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
       message: "Vetting requested for LumiLEDs Lighting on PO €450,000."
     },
     {
-      sender: "The Bank Credit Agent",
+      sender: "The Bank Credit Score",
       action_type: "PROVIDE_SCORE",
       timestamp: "11:02:15 AM",
       message: "LumiLEDs credit rating is A (Low Risk). Standard Bank Guarantee recommended due to capital allocation structure."
@@ -199,7 +199,7 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
       message: "We request The Bank to register a Standard Bank Guarantee for €450,000 to secure raw material financing."
     },
     {
-      sender: "The Bank Credit Agent",
+      sender: "The Bank Credit Score",
       action_type: "APPROVE_FINANCE",
       timestamp: "11:02:22 AM",
       message: "Standard Bank Guarantee of €450,000 issued and registered under the supplier limit registry."
@@ -219,7 +219,7 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
       message: "Vetting requested for Medical Systems Corp. Target PO amount: €1,500,000."
     },
     {
-      sender: "The Bank Credit Agent",
+      sender: "The Bank Credit Score",
       action_type: "PROVIDE_SCORE",
       timestamp: "09:30:02 AM",
       message: "Medical Systems Corp has a rating of AAA (Extremely Low Risk of default). High liquidity, zero payment delay history.\nRecommended program: Unsecured Early Payment Program."
@@ -236,14 +236,6 @@ const PHILIPS_AUDIT_LOGS: Record<string, any[]> = {
 // Available bank agents list
 const ALL_BANK_AGENTS = [
   {
-    id: "esg",
-    name: "ESG",
-    description: "Audits environmental impact, carbon footprint ratings, and ethical governance standards.",
-    popular: false,
-    status: "Active",
-    category: "corporate"
-  },
-  {
     id: "calculator",
     name: "Risk Calculator",
     description: "Simulates debt, equity, and liquidity risks using dynamic mathematical scoring models.",
@@ -253,9 +245,33 @@ const ALL_BANK_AGENTS = [
   },
   {
     id: "credit",
-    name: "Credit",
+    name: "Credit Score",
     description: "Vets supplier credit ratings and stores cleared audit transcripts in connection with your client portals.",
     popular: true,
+    status: "Active",
+    category: "corporate"
+  },
+  {
+    id: "mortgage",
+    name: "Mortgage Vetting",
+    description: "Evaluates individual property loan applications, credit scores, debt-to-income ratios, and collateral valuations.",
+    popular: true,
+    status: "Active",
+    category: "retail"
+  },
+  {
+    id: "wealth",
+    name: "Wealth Advisor",
+    description: "Formulates personalized investment portfolios, risk tolerance profiles, and retirement planning strategies.",
+    popular: true,
+    status: "Active",
+    category: "retail"
+  },
+  {
+    id: "esg",
+    name: "ESG",
+    description: "Audits environmental impact, carbon footprint ratings, and ethical governance standards.",
+    popular: false,
     status: "Active",
     category: "corporate"
   },
@@ -274,22 +290,6 @@ const ALL_BANK_AGENTS = [
     popular: false,
     status: "Inactive",
     category: "corporate"
-  },
-  {
-    id: "mortgage",
-    name: "Mortgage Vetting",
-    description: "Evaluates individual property loan applications, credit scores, debt-to-income ratios, and collateral valuations.",
-    popular: true,
-    status: "Active",
-    category: "retail"
-  },
-  {
-    id: "wealth",
-    name: "Wealth Advisor",
-    description: "Formulates personalized investment portfolios, risk tolerance profiles, and retirement planning strategies.",
-    popular: true,
-    status: "Active",
-    category: "retail"
   },
   {
     id: "fraud",
@@ -313,7 +313,7 @@ function getAgentIllustration(id: string) {
   switch (id) {
     case "calculator":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <rect x="25" y="15" width="50" height="15" rx="2" />
           <line x1="30" y1="22" x2="70" y2="22" strokeDasharray="2 2" />
           <rect x="20" y="10" width="60" height="75" rx="4" />
@@ -330,7 +330,7 @@ function getAgentIllustration(id: string) {
       );
     case "credit":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-pulse-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <rect x="20" y="25" width="60" height="40" rx="4" />
           <line x1="20" y1="35" x2="80" y2="35" strokeWidth="2" />
           <rect x="30" y="45" width="10" height="8" rx="1" />
@@ -340,7 +340,7 @@ function getAgentIllustration(id: string) {
       );
     case "esg":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-rotate-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="50" cy="50" r="25" />
           <path d="M50,25 C65,25 75,35 75,50 C75,65 65,75 50,75 C50,75 40,60 50,50 C60,40 50,25 50,25 Z" />
           <path d="M35,45 Q42,40 50,50" />
@@ -348,14 +348,14 @@ function getAgentIllustration(id: string) {
       );
     case "compliance":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M50,15 L75,25 L75,50 C75,68 64,81 50,85 C36,81 25,68 25,50 L25,25 Z" />
           <path d="M40,50 L47,57 L62,42" />
         </svg>
       );
     case "legal":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-pulse-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <rect x="25" y="15" width="50" height="70" rx="3" />
           <line x1="35" y1="30" x2="65" y2="30" />
           <line x1="35" y1="42" x2="65" y2="42" />
@@ -366,7 +366,7 @@ function getAgentIllustration(id: string) {
       );
     case "mortgage":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20,50 L50,25 L80,50" />
           <rect x="30" y="50" width="40" height="35" />
           <rect x="45" y="65" width="10" height="20" />
@@ -374,7 +374,7 @@ function getAgentIllustration(id: string) {
       );
     case "wealth":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-rotate-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20,75 L40,50 L60,60 L80,35" />
           <polyline points="72,35 80,35 80,43" />
           <circle cx="50" cy="50" r="30" strokeDasharray="3 3" />
@@ -382,7 +382,7 @@ function getAgentIllustration(id: string) {
       );
     case "fraud":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-pulse-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="45" cy="45" r="18" />
           <line x1="58" y1="58" x2="78" y2="78" strokeWidth="3" />
           <path d="M35,45 C35,39 39,35 45,35" />
@@ -390,7 +390,7 @@ function getAgentIllustration(id: string) {
       );
     case "personal_credit":
       return (
-        <svg className="w-20 h-20 text-[#00b4d8] mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg className="w-28 h-28 text-[#00b4d8] mx-auto animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20,70 A35,35 0 0,1 80,70" />
           <line x1="50" y1="70" x2="65" y2="45" strokeWidth="2.5" />
           <circle cx="50" cy="70" r="5" fill="currentColor" />
@@ -402,9 +402,41 @@ function getAgentIllustration(id: string) {
 }
 
 export default function TheBankDashboard() {
-  const [selectedAgentId, setSelectedAgentId] = useState("esg");
+  const [selectedAgentId, setSelectedAgentId] = useState("calculator");
   const [agentCategory, setAgentCategory] = useState<"corporate" | "retail">("corporate");
   const [agentSearch, setAgentSearch] = useState("");
+  const [addedAgentId, setAddedAgentId] = useState<string | null>(null);
+  const [addedAgentIds, setAddedAgentIds] = useState<string[]>([]);
+  const [loginTime, setLoginTime] = useState("");
+  const [popupAgentId, setPopupAgentId] = useState<string | null>(null);
+  const [setupSuccessId, setSetupSuccessId] = useState<string | null>(null);
+  const [copiedAgentId, setCopiedAgentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const now = new Date();
+    setLoginTime(now.toLocaleString());
+  }, []);
+
+  const handleAddToCart = (e: React.MouseEvent, agentId: string) => {
+    e.stopPropagation();
+    setAddedAgentId(agentId);
+    if (!addedAgentIds.includes(agentId)) {
+      setAddedAgentIds([...addedAgentIds, agentId]);
+    }
+    setPopupAgentId(agentId);
+    setTimeout(() => {
+      setAddedAgentId(null);
+    }, 1000);
+  };
+
+  const handleCopyUrl = (e: React.MouseEvent, agentId: string, url: string) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(url);
+    setCopiedAgentId(agentId);
+    setTimeout(() => {
+      setCopiedAgentId(null);
+    }, 2000);
+  };
 
   // Client Portfolio search states
   const [clientSearch, setClientSearch] = useState("");
@@ -520,16 +552,22 @@ export default function TheBankDashboard() {
     setCalcResult({ score, risk, rating });
   };
 
-  // Filter agents list based on category & search query
+  // Filter and sort agents list so popular are at the beginning
   const filteredAgents = ALL_BANK_AGENTS.filter(agent =>
     agent.category === agentCategory &&
     (agent.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
      agent.description.toLowerCase().includes(agentSearch.toLowerCase()))
-  );
+  ).sort((a, b) => {
+    if (a.popular && !b.popular) return -1;
+    if (!a.popular && b.popular) return 1;
+    return 0;
+  });
 
   const activeAgentInfo = ALL_BANK_AGENTS.find(a => a.id === selectedAgentId) || 
                           ALL_BANK_AGENTS.find(a => a.category === agentCategory) ||
                           ALL_BANK_AGENTS[0];
+
+  const popupAgent = ALL_BANK_AGENTS.find(a => a.id === popupAgentId);
 
   return (
     <div
@@ -560,17 +598,22 @@ export default function TheBankDashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end gap-1">
             <span className="text-[10px] md:text-xs text-emerald-350 bg-[#0018a8]/80 px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-blue-400/30 font-bold uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              Secure Link
+              login as : nishikant
             </span>
+            {loginTime && (
+              <span className="text-[10px] text-blue-200 font-semibold tracking-wider">
+                Last Login: {loginTime}
+              </span>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Grid Workspace (Stacked Vertically: Up and Down) */}
-      <main className="flex-1 max-w-[80%] w-[80%] mx-auto p-4 md:p-6 flex flex-col gap-6">
+      <main className="flex-1 max-w-[80%] w-[80%] mx-auto pt-16 pb-6 px-4 md:pt-20 md:pb-8 md:px-6 flex flex-col gap-6">
 
         {/* ROW 1: prometheus ai gardens (SINGLE CONTAINER - 30% LARGER IN VISUAL HEIGHT & SPACING) */}
         <div className="w-full flex-1 bg-white/70 backdrop-blur-md rounded-xl border border-blue-200/40 p-8 shadow-md flex flex-col gap-8">
@@ -630,19 +673,30 @@ export default function TheBankDashboard() {
             </div>
 
             {/* Agent Selection Grid (Horizontal List - Modern cards matching the DB Developer portal style) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-2">
               {filteredAgents.map((agent) => {
                 const isSelected = selectedAgentId === agent.id;
+                const isAdded = addedAgentIds.includes(agent.id);
                 return (
                   <div
                     key={agent.id}
                     onClick={() => setSelectedAgentId(agent.id)}
-                    className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md ${
+                    className={`relative bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all duration-355 cursor-pointer ${
                       isSelected
-                        ? "border-[#00b4d8] ring-1 ring-[#00b4d8]/20"
-                        : "border-slate-200/60 hover:border-slate-350"
+                        ? "border-2 border-[#002f6c] ring-4 ring-[#00b4d8]/25 shadow-2xl scale-[1.02] -translate-y-1.5 z-10"
+                        : "border-slate-200/80 shadow-xs hover:border-slate-300"
                     }`}
                   >
+                    {/* Added Overlay Banner */}
+                    {addedAgentId === agent.id && (
+                      <div className="absolute inset-0 bg-[#4ea800]/95 rounded-2xl flex flex-col items-center justify-center text-white z-40 transition-opacity duration-300 font-bold text-sm">
+                        <svg className="w-8 h-8 mb-1.5 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Added!
+                      </div>
+                    )}
+
                     {/* Top status badge */}
                     <div className="flex gap-1.5 mb-3 flex-wrap">
                       {agent.status === "Active" ? (
@@ -667,32 +721,36 @@ export default function TheBankDashboard() {
                     </div>
 
                     {/* Agent details */}
-                    <div className="flex-1 flex flex-col justify-between min-h-[140px]">
-                      <div>
-                        <h3 className="text-slate-800 text-sm md:text-base font-bold tracking-tight mb-2">
+                    <div className="flex-1 flex flex-col justify-between min-h-[180px] transition-all duration-305">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-slate-800 text-sm md:text-base font-bold tracking-tight">
                           {agent.name}
                         </h3>
-                        <p className="text-slate-500 text-[11px] md:text-xs leading-relaxed mb-4 font-medium line-clamp-4">
+                        <p className="text-slate-505 text-[11px] md:text-xs leading-relaxed font-medium line-clamp-4">
                           {agent.description}
                         </p>
                       </div>
 
-                      {/* Footer CTA */}
-                      <div className="flex items-center gap-2 pt-3 border-t border-slate-100 mt-auto">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
-                          isSelected 
-                            ? "bg-[#00b4d8]/10 border-[#00b4d8] text-[#00b4d8]" 
-                            : "border-slate-300 text-slate-400"
-                        }`}>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                        <span className={`text-[10px] md:text-xs font-bold transition-all ${
-                          isSelected ? "text-[#00b4d8]" : "text-slate-500 hover:text-slate-700"
-                        }`}>
-                          {isSelected ? "Active Agent" : "Use Product"}
-                        </span>
+                      {/* Card Bottom Actions */}
+                      <div className="pt-2 mt-auto border-t border-slate-100 flex items-center justify-end">
+                        {!isAdded ? (
+                          <button
+                            onClick={(e) => handleAddToCart(e, agent.id)}
+                            className="bg-[#00b4d8] hover:bg-[#0096c7] text-white font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 text-xs transition cursor-pointer shadow-sm"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-slate-100 text-slate-400 border border-slate-200 font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed shadow-none"
+                          >
+                            Added
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -703,249 +761,7 @@ export default function TheBankDashboard() {
               )}
             </div>
 
-            {/* Active Agent Workspace / Description Layout */}
-            <div className="flex-1 bg-white/80 backdrop-blur-md rounded-xl border border-blue-200/50 p-6 shadow-md mt-0 flex flex-col">
-              <div className="flex flex-col gap-4 flex-1">
 
-                {/* 1. BANK AGENTS DESCRIPTION (ALWAYS FIRST AS REQUESTED - POSITIONED RIGHT UNDER SELECTED TAB) */}
-                <div className="bg-blue-50/30 p-4 rounded-lg border border-blue-100 text-sm md:text-base text-[#002f6c] leading-relaxed shadow-sm font-medium">
-                  <h3 className="text-[#002f6c] text-lg font-black uppercase tracking-wider mb-1 flex items-center gap-2">
-                    🤖 {activeAgentInfo.name}
-                  </h3>
-                  <p className="text-slate-600 text-xs mt-1 leading-relaxed">
-                    {activeAgentInfo.description}
-                  </p>
-                </div>
-
-
-
-                {selectedAgentId === "calculator" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 animate-fadeIn">
-                    <div className="flex flex-col gap-4 text-sm">
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between font-bold text-slate-700">
-                          <span>Liquidity Ratio</span>
-                          <span className="text-[#002f6c]">{calcLiquidity}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="3.5"
-                          step="0.1"
-                          value={calcLiquidity}
-                          onChange={(e) => setCalcLiquidity(parseFloat(e.target.value))}
-                          className="w-full accent-[#002f6c] h-1"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between font-bold text-slate-700">
-                          <span>Debt-to-Equity</span>
-                          <span className="text-[#002f6c]">{calcDebtToEquity}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0.1"
-                          max="2.5"
-                          step="0.1"
-                          value={calcDebtToEquity}
-                          onChange={(e) => setCalcDebtToEquity(parseFloat(e.target.value))}
-                          className="w-full accent-[#002f6c] h-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-blue-50/20 border border-blue-100 px-4 py-3 rounded-lg flex items-center justify-between text-center">
-                      <div className="flex flex-col items-center justify-center w-full">
-                        <span className="text-[11px] md:text-xs text-slate-400 font-bold uppercase tracking-wider block">Estimated Credit Rating</span>
-                        <strong className="text-3xl font-black text-[#002f6c] mt-1">{calcResult.score}</strong>
-                        <span className="text-[11px] md:text-xs text-slate-500 font-semibold mt-0.5">Rating: {calcResult.rating}/100</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "esg" && selectedSupplier && (
-                  <div className="mt-2 animate-fadeIn">
-                    <div className="grid grid-cols-3 gap-3 text-sm">
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[11px] md:text-xs text-slate-450 font-bold uppercase">ESG Score</span>
-                        <strong className="text-emerald-700 text-xl mt-1">{selectedSupplier.esg_rating}</strong>
-                      </div>
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[11px] md:text-xs text-slate-450 font-bold uppercase">CO2 Footprint</span>
-                        <strong className="text-slate-800 text-base mt-1">{selectedSupplier.co2_footprint}</strong>
-                      </div>
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[11px] md:text-xs text-slate-450 font-bold uppercase">Ethical Sourcing</span>
-                        <strong className="text-slate-855 text-base mt-1">{selectedSupplier.ethical_sourcing}</strong>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "compliance" && (
-                  <div className="space-y-2 text-sm font-mono mt-2 animate-fadeIn">
-                    <div className="flex justify-between p-3 bg-slate-50 border border-blue-50 rounded">
-                      <span>OFAC Sanctions Vetting:</span>
-                      <span className="text-emerald-700 font-bold">PASSED</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-slate-50 border border-blue-50 rounded">
-                      <span>PEP Lists registry Check:</span>
-                      <span className="text-emerald-700 font-bold">PASSED</span>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "legal" && (
-                  <div className="mt-2 animate-fadeIn flex flex-col gap-2.5">
-                    <span className="text-xs md:text-sm text-[#002f6c] font-bold uppercase tracking-wider block">
-                      Vetting Parameters (Currently Suspended)
-                    </span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                      <div className="flex justify-between p-3 bg-slate-50/60 border border-slate-200 text-slate-400 rounded-lg">
-                        <span>Contract Clause Verification</span>
-                        <span className="text-amber-600 font-bold">SUSPENDED</span>
-                      </div>
-                      <div className="flex justify-between p-3 bg-slate-50/60 border border-slate-200 text-slate-400 rounded-lg">
-                        <span>Jurisdictional Audits</span>
-                        <span className="text-amber-600 font-bold">SUSPENDED</span>
-                      </div>
-                      <div className="flex justify-between p-3 bg-slate-50/60 border border-slate-200 text-slate-400 rounded-lg">
-                        <span>Corporate Shield Vetting</span>
-                        <span className="text-amber-600 font-bold">SUSPENDED</span>
-                      </div>
-                      <div className="flex justify-between p-3 bg-slate-50/60 border border-slate-200 text-slate-400 rounded-lg">
-                        <span>Insurance Bond Clearance</span>
-                        <span className="text-amber-600 font-bold">SUSPENDED</span>
-                      </div>
-                    </div>
-                    <div className="bg-slate-100/60 border border-slate-200 p-3 rounded-lg text-center text-slate-450 text-[10px] font-mono mt-1">
-                      ⚠️ Legal check agent is currently INACTIVE. Session auditing and real-time compliance vetting are suspended.
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "mortgage" && (
-                  <div className="mt-2 animate-fadeIn grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-                    <div className="p-3 bg-slate-50 border border-blue-50 rounded-lg flex flex-col gap-1.5">
-                      <span className="font-bold text-[#002f6c] uppercase">Mortgage Risk Assessment</span>
-                      <div className="flex justify-between border-b border-blue-50/50 pb-1">
-                        <span>Debt-to-Income (DTI):</span>
-                        <span className="text-emerald-700 font-bold">28% (Optimal)</span>
-                      </div>
-                      <div className="flex justify-between border-b border-blue-50/50 pb-1">
-                        <span>Loan-to-Value (LTV):</span>
-                        <span className="text-emerald-700 font-bold">75% (Safe)</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Co-Signer Vetting:</span>
-                        <span className="text-slate-500 font-bold">Not Required</span>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-lg flex flex-col justify-center items-center text-center">
-                      <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">Pre-Approval Recommendation</span>
-                      <strong className="text-2xl font-black text-emerald-700 mt-1">APPROVED</strong>
-                      <span className="text-[9px] text-slate-500 mt-1">Maximum Eligible: $1,200,000</span>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "wealth" && (
-                  <div className="mt-2 animate-fadeIn flex flex-col gap-3 font-mono text-xs">
-                    <span className="text-xs md:text-sm text-[#002f6c] font-bold uppercase tracking-wider block">
-                      Target Portfolio Allocation
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[9px] text-slate-450 font-bold uppercase">Equities</span>
-                        <strong className="text-slate-800 text-lg mt-1">60%</strong>
-                      </div>
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[9px] text-slate-455 font-bold uppercase">Fixed Income</span>
-                        <strong className="text-slate-800 text-lg mt-1">25%</strong>
-                      </div>
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[9px] text-slate-455 font-bold uppercase">Alternatives</span>
-                        <strong className="text-slate-800 text-lg mt-1">10%</strong>
-                      </div>
-                      <div className="bg-slate-50 border border-blue-50 p-3 rounded flex flex-col justify-between">
-                        <span className="text-[9px] text-slate-455 font-bold uppercase">Cash</span>
-                        <strong className="text-slate-800 text-lg mt-1">5%</strong>
-                      </div>
-                    </div>
-                    <div className="bg-blue-50/30 border border-blue-100 p-2.5 rounded-lg text-slate-650 text-[10px] leading-relaxed">
-                      ℹ️ **Strategy**: Diversified Growth. Optimized for moderate-high risk tolerance with bi-annual rebalancing signals activated.
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "fraud" && (
-                  <div className="mt-2 animate-fadeIn space-y-2 text-sm font-mono">
-                    <div className="flex justify-between p-3 bg-slate-50 border border-blue-50 rounded">
-                      <span>IP Geolocation Audit:</span>
-                      <span className="text-emerald-700 font-bold">MATCH (Within 5 miles)</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-slate-50 border border-blue-50 rounded">
-                      <span>Biometric keystroke verification:</span>
-                      <span className="text-emerald-700 font-bold">98.4% CONFIDENCE</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-red-50/40 border border-red-100 rounded text-red-800">
-                      <span>Suspicious Transaction Flag:</span>
-                      <span className="font-bold">CLEARED (0 Flags)</span>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAgentId === "personal_credit" && (
-                  <div className="mt-2 animate-fadeIn grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-                    <div className="p-3 bg-slate-50 border border-blue-50 rounded-lg flex flex-col gap-1.5">
-                      <span className="font-bold text-[#002f6c] uppercase">Consumer Credit Metrics</span>
-                      <div className="flex justify-between border-b border-blue-50/50 pb-1">
-                        <span>Equifax score:</span>
-                        <span className="text-emerald-700 font-bold">785 (Excellent)</span>
-                      </div>
-                      <div className="flex justify-between border-b border-blue-50/50 pb-1">
-                        <span>TransUnion score:</span>
-                        <span className="text-emerald-700 font-bold">790 (Excellent)</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Credit Utilization:</span>
-                        <span className="text-emerald-700 font-bold">12.5%</span>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-slate-50 border border-blue-50 rounded-lg flex flex-col justify-center gap-1.5">
-                      <div className="flex justify-between">
-                        <span>Derogatory Marks:</span>
-                        <span className="text-emerald-700 font-bold">0</span>
-                      </div>
-                      <div className="flex justify-between mt-1">
-                        <span>Average Account Age:</span>
-                        <span className="text-slate-700 font-bold">8.4 Years</span>
-                      </div>
-                      <div className="flex justify-between mt-1">
-                        <span>Recommended Limit:</span>
-                        <span className="text-slate-700 font-bold">$25,000 (Visa Signature)</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Bottom Right Use Me Button */}
-                <div className="flex justify-end mt-auto pt-4 border-t border-slate-100">
-                  <button 
-                    onClick={() => alert(`Agent "${activeAgentInfo.name}" activated!`)}
-                    className="bg-[#002f6c] hover:bg-blue-800 text-white font-bold py-2.5 px-5 rounded-lg flex items-center gap-2 text-xs transition cursor-pointer shadow-md"
-                  >
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Use Me
-                  </button>
-                </div>
-
-              </div>
-            </div>
           </div>
         </div>
 
@@ -960,6 +776,109 @@ export default function TheBankDashboard() {
           </span>
         </div>
       </footer>
+
+      {/* Popup Modal */}
+      {popupAgent && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          {/* Modal Box */}
+          <div className="bg-white rounded-3xl border border-slate-100/50 shadow-2xl p-8 max-w-lg w-full flex flex-col gap-6 relative animate-fadeIn transform scale-100">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setPopupAgentId(null);
+                setSetupSuccessId(null);
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Logo and Header info */}
+            <div className="flex flex-col items-center text-center gap-4 border-b border-slate-100 pb-4">
+              <div className="py-2 px-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+                {getAgentIllustration(popupAgent.id)}
+              </div>
+              <div className="flex flex-col gap-1">
+                <h2 className="text-[#002f6c] text-xl font-black uppercase tracking-wider">
+                  {popupAgent.name}
+                </h2>
+                <span className="text-[10px] bg-[#002f6c] text-white font-extrabold px-2.5 py-0.5 rounded tracking-wide uppercase self-center mt-1">
+                  Active Agent Tile
+                </span>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">
+                Description
+              </span>
+              <p className="text-slate-600 text-sm leading-relaxed font-medium">
+                {popupAgent.description}
+              </p>
+            </div>
+
+            {/* URL section */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-[#002f6c] uppercase tracking-wider block">
+                Agent Access URL
+              </span>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  readOnly
+                  value="https://banking-risk-agent-1067236812899.asia-south1.run.app"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-16 py-3 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#00b4d8] select-all cursor-text"
+                />
+                {/* Copy Button */}
+                <button
+                  onClick={(e) => handleCopyUrl(e, popupAgent.id, "https://banking-risk-agent-1067236812899.asia-south1.run.app")}
+                  className="absolute right-3 p-1.5 text-slate-450 hover:text-[#00b4d8] transition rounded-lg hover:bg-slate-100 cursor-pointer"
+                  title="Copy URL"
+                >
+                  {copiedAgentId === popupAgent.id ? (
+                    <span className="text-[10px] text-emerald-600 font-bold">Copied!</span>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Bottom Actions */}
+            <div className="border-t border-slate-100 pt-4 flex items-center justify-between gap-4 mt-2">
+              {/* AJAX Success Message - Setup done successfully */}
+              <div className="flex-1 min-h-[36px] flex items-center">
+                {setupSuccessId === popupAgent.id && (
+                  <span className="text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 animate-fadeIn">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    setup done successfully
+                  </span>
+                )}
+              </div>
+
+              {/* Setup Button */}
+              <button
+                onClick={() => setSetupSuccessId(popupAgent.id)}
+                className="bg-[#002f6c] hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl text-xs flex items-center gap-2 transition cursor-pointer shadow-md shrink-0"
+              >
+                <svg className="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Setup
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
