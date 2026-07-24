@@ -324,7 +324,7 @@ function getAgentIllustration(id: string) {
               <stop offset="100%" stopColor="#fb8500" />
             </linearGradient>
             <filter id="shadow3d" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="2" dy="4" stdDeviation="3" floodColor="#000000" floodOpacity="0.25"/>
+              <feDropShadow dx="2" dy="4" stdDeviation="3" floodColor="#000000" floodOpacity="0.25" />
             </filter>
           </defs>
           <rect x="20" y="10" width="60" height="80" rx="6" fill="url(#calcGrad)" filter="url(#shadow3d)" stroke="#00b4d8" strokeWidth="1.5" />
@@ -333,11 +333,11 @@ function getAgentIllustration(id: string) {
           <circle cx="36" cy="48" r="4.5" fill="url(#goldGrad)" />
           <circle cx="50" cy="48" r="4.5" fill="url(#goldGrad)" />
           <circle cx="64" cy="48" r="4.5" fill="url(#goldGrad)" />
-          
+
           <circle cx="36" cy="62" r="4.5" fill="#f87171" />
           <circle cx="50" cy="62" r="4.5" fill="#38bdf8" />
           <circle cx="64" cy="62" r="4.5" fill="#34d399" />
-          
+
           <circle cx="36" cy="76" r="4.5" fill="#e2e8f0" />
           <circle cx="50" cy="76" r="4.5" fill="#e2e8f0" />
           <rect x="59" y="71" width="10" height="10" rx="2" fill="url(#goldGrad)" />
@@ -382,7 +382,7 @@ function getAgentIllustration(id: string) {
               <stop offset="100%" stopColor="#059669" />
             </linearGradient>
             <filter id="shadow3d3" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="2" dy="5" stdDeviation="3.5" floodColor="#047857" floodOpacity="0.3"/>
+              <feDropShadow dx="2" dy="5" stdDeviation="3.5" floodColor="#047857" floodOpacity="0.3" />
             </filter>
           </defs>
           <circle cx="50" cy="50" r="30" fill="url(#esgGrad)" filter="url(#shadow3d3)" stroke="#ffffff" strokeWidth="1.5" />
@@ -403,7 +403,7 @@ function getAgentIllustration(id: string) {
               <stop offset="100%" stopColor="#059669" />
             </linearGradient>
             <filter id="shadow3d4" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="3" dy="6" stdDeviation="3" floodColor="#78350f" floodOpacity="0.4"/>
+              <feDropShadow dx="3" dy="6" stdDeviation="3" floodColor="#78350f" floodOpacity="0.4" />
             </filter>
           </defs>
           <path d="M50,15 L78,25 L78,50 C78,69 66,83 50,87 C34,83 22,69 22,50 L22,25 Z" fill="url(#shieldGrad)" filter="url(#shadow3d4)" stroke="#ffffff" strokeWidth="1.5" />
@@ -447,7 +447,7 @@ function getAgentIllustration(id: string) {
               <stop offset="100%" stopColor="#be185d" />
             </linearGradient>
             <filter id="shadow3d6" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="3" dy="5" stdDeviation="3" floodColor="#0c4a6e" floodOpacity="0.35"/>
+              <feDropShadow dx="3" dy="5" stdDeviation="3" floodColor="#0c4a6e" floodOpacity="0.35" />
             </filter>
           </defs>
           <path d="M15,50 L50,18 L85,50 Z" fill="url(#roofGrad)" filter="url(#shadow3d6)" stroke="#ffffff" strokeWidth="1" />
@@ -686,16 +686,16 @@ export default function TheBankDashboard() {
   const filteredAgents = ALL_BANK_AGENTS.filter(agent =>
     agent.category === agentCategory &&
     (agent.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
-     agent.description.toLowerCase().includes(agentSearch.toLowerCase()))
+      agent.description.toLowerCase().includes(agentSearch.toLowerCase()))
   ).sort((a, b) => {
     if (a.popular && !b.popular) return -1;
     if (!a.popular && b.popular) return 1;
     return 0;
   });
 
-  const activeAgentInfo = ALL_BANK_AGENTS.find(a => a.id === selectedAgentId) || 
-                          ALL_BANK_AGENTS.find(a => a.category === agentCategory) ||
-                          ALL_BANK_AGENTS[0];
+  const activeAgentInfo = ALL_BANK_AGENTS.find(a => a.id === selectedAgentId) ||
+    ALL_BANK_AGENTS.find(a => a.category === agentCategory) ||
+    ALL_BANK_AGENTS[0];
 
   const popupAgent = ALL_BANK_AGENTS.find(a => a.id === popupAgentId);
 
@@ -741,9 +741,9 @@ export default function TheBankDashboard() {
           </div>
 
           <div className="flex flex-col items-end gap-1">
-            <span className="text-[10px] md:text-xs text-emerald-350 bg-[#0018a8]/80 px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-blue-400/30 font-bold tracking-widest">
+            <span className="text-[12px] md:text-sm text-white flex items-center gap-1.5 font-bold tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              login as : nishikant(SpaceY)
+              Login as : Ethan Ma(SpaceY)
             </span>
             {loginTime && (
               <span className="text-[10px] text-blue-200 font-semibold tracking-wider">
@@ -770,7 +770,7 @@ export default function TheBankDashboard() {
                     <stop offset="100%" stopColor="#059669" />
                   </linearGradient>
                   <filter id="gardShadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodColor="#047857" floodOpacity="0.3"/>
+                    <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodColor="#047857" floodOpacity="0.3" />
                   </filter>
                 </defs>
                 <path d="M50,15 C65,15 75,25 75,40 C75,55 65,65 50,65 C50,65 40,50 50,40 C60,30 50,15 50,15 Z" fill="url(#gardGrad)" filter="url(#gardShadow)" />
@@ -789,11 +789,10 @@ export default function TheBankDashboard() {
                     setAgentCategory("corporate");
                     setSelectedAgentId("esg");
                   }}
-                  className={`pb-1 px-1 text-[13px] font-semibold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                    agentCategory === "corporate"
+                  className={`pb-1 px-1 text-[13px] font-semibold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${agentCategory === "corporate"
                       ? "border-[#002f6c] text-[#17233C]"
                       : "border-transparent text-[#60708A] hover:text-[#17233C]"
-                  }`}
+                    }`}
                 >
                   🏢 Corporate
                 </button>
@@ -802,11 +801,10 @@ export default function TheBankDashboard() {
                     setAgentCategory("retail");
                     setSelectedAgentId("mortgage");
                   }}
-                  className={`pb-1 px-1 text-[13px] font-semibold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                    agentCategory === "retail"
+                  className={`pb-1 px-1 text-[13px] font-semibold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${agentCategory === "retail"
                       ? "border-[#002f6c] text-[#17233C]"
                       : "border-transparent text-[#60708A] hover:text-[#17233C]"
-                  }`}
+                    }`}
                 >
                   👤 Retail
                 </button>
@@ -830,7 +828,7 @@ export default function TheBankDashboard() {
 
           {/* Tabs & description wrapped with a smaller vertical gap to reduce space */}
           <div className="flex flex-col gap-2 flex-1">
-            
+
             {/* Agent Selection Grid (Horizontal List - Modern cards matching the DB Developer portal style) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-2">
               {filteredAgents.map((agent) => {
@@ -840,11 +838,10 @@ export default function TheBankDashboard() {
                   <div
                     key={agent.id}
                     onClick={() => setSelectedAgentId(agent.id)}
-                    className={`relative bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all duration-355 cursor-pointer ${
-                      isSelected
+                    className={`relative bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all duration-355 cursor-pointer ${isSelected
                         ? "border-2 border-[#002f6c] ring-4 ring-[#00b4d8]/25 shadow-2xl scale-[1.02] -translate-y-1.5 z-10"
                         : "border-slate-200/80 shadow-xs hover:border-slate-300"
-                    }`}
+                      }`}
                   >
                     {/* Added Overlay Banner */}
                     {addedAgentId === agent.id && (
@@ -859,14 +856,14 @@ export default function TheBankDashboard() {
                     {/* Top status badge */}
                     <div className="flex gap-1.5 mb-3 flex-wrap font-sans items-center">
                       {agent.status === "Active" ? (
-                        <span 
+                        <span
                           className="bg-[#4ea800]/10 text-[#4ea800] border border-[#4ea800]/25 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 text-[10px]"
                         >
                           <span className="w-1 h-1 rounded-full bg-[#4ea800] animate-pulse"></span>
                           Live
                         </span>
                       ) : (
-                        <span 
+                        <span
                           className="bg-[#ff9e1b]/10 text-[#ff9e1b] border border-[#ff9e1b]/25 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 text-[10px]"
                         >
                           <span className="w-1 h-1 rounded-full bg-[#ff9e1b]"></span>
@@ -874,7 +871,7 @@ export default function TheBankDashboard() {
                         </span>
                       )}
                       {agent.popular && (
-                        <span 
+                        <span
                           className="bg-[#002f6c]/10 text-[#002f6c] border border-[#002f6c]/25 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 text-[10px]"
                         >
                           <svg className="w-2 h-2 text-[#002f6c]" fill="currentColor" viewBox="0 0 20 20">
@@ -949,7 +946,7 @@ export default function TheBankDashboard() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
           {/* Modal Box */}
           <div className="bg-white rounded-3xl border border-slate-100/50 shadow-2xl p-8 max-w-lg w-full flex flex-col gap-6 relative animate-fadeIn transform scale-100">
-            
+
             {/* Close Button */}
             <button
               onClick={() => {
@@ -1071,7 +1068,7 @@ export default function TheBankDashboard() {
                       📋 Setup Instructions
                     </span>
                   </div>
-                  
+
                   <ol className="text-[15px] text-[#60708A] flex flex-col gap-2.5 leading-[1.6] font-normal">
                     <li className="flex gap-2">
                       <span className="font-bold text-[#00b4d8] shrink-0">1.</span>
