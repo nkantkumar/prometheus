@@ -945,7 +945,7 @@ export default function TheBankDashboard() {
       {popupAgent && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
           {/* Modal Box */}
-          <div className="bg-white rounded-3xl border border-slate-100/50 shadow-2xl p-8 max-w-lg w-full flex flex-col gap-6 relative animate-fadeIn transform scale-100">
+          <div className="bg-white rounded-3xl border border-slate-100/50 shadow-2xl p-8 max-w-2xl w-full flex flex-col gap-6 relative animate-fadeIn transform scale-100">
 
             {/* Close Button */}
             <button
